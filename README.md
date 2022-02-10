@@ -12,5 +12,6 @@ Ideas
 1. Placing tiles on the boundary of the board is probably a little more useful than just the best choice
 2. Heuristic function should also take into account the neighboring squares (including those which are empty!)
 3. Initial measure of a position is playerTiles - opponent Tiles
+4. It is probably beneficial for a player to make a move that leaves the opponent without moves, so as to get another turn
 
 More to come, for sure.
