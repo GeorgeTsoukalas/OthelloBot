@@ -5,7 +5,7 @@ I first encountered the game Othello on a plane ride, where I played on the scre
 Update Log
 ----------
 [2/9/2022] Preliminary Coding of the Game
-
+[2/17/2022] Coding up of the Visual (after a busy week without a functioning laptop!)
 
 Ideas
 -----
