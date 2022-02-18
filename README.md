@@ -5,7 +5,8 @@ I first encountered the game Othello on a plane ride, where I played on the scre
 Update Log
 ----------
 [2/9/2022] Preliminary Coding of the Game
-[2/17/2022] Coding up of the Visual (after a busy week without a functioning laptop!)
+\newline
+[2/17/2022] The visual and game functionality now works and is available in OthelloGameUpdated.py. It requires pygame to run, and also keeps a tracker of the square counts for each player. Next up is coding the minimax algorithm.
 
 Ideas
 -----
