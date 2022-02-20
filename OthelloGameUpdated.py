@@ -1,5 +1,136 @@
 import pygame
 import math
+class OthelloBoard:
+    def __init__(self, board, square_counts, player,empty_spaces):
+        self.board = [[0 for x in range(8)] for y in range(8)]
+        self.board[4][4]=-1
+        self.board[3][3]=-1
+        self.board[3][4]=1
+        self.board[4][3]=1
+        self.square_counts={
+            1:2
+            -1:2
+        }
+        player=-1
+        emptyspaces = [[a,b] for a in range(8) for b in range(8)]
+        emptyspaces.remove([4,4])
+        emptyspaces.remove([3,3])
+        emptyspaces.remove([3,4])
+        emptyspaces.remove([4,3])
+    def IsSquarePlayable(self, Square): # square is of the form [x,y]
+        #This needs to check each of 8 directions - we can do 8 while loops for now until we hit white space or another black
+        currentSquare = Square[:]
+        for i in directions:
+            currentSquare = Square[:]
+            currentSquare[0]+=i[0]
+            currentSquare[1]+=i[1] # pass by reference - but I think this is ok? CHECK
+            #print("Current Square is "+str(currentSquare))
+            oppositePlayerSquaresOnTheWay = 0
+            while (0 <= currentSquare[0] and currentSquare[0] <= 7 and 0 <= currentSquare[1] and currentSquare[1] <= 7):
+                if self.board[currentSquare[0]][currentSquare[1]] == -1*self.player:
+                    oppositePlayerSquaresOnTheWay+=1
+                    currentSquare[0] = currentSquare[0]+i[0]
+                    currentSquare[1] = currentSquare[1]+i[1]
+                elif self.board[currentSquare[0]][currentSquare[1]] == self.player: # one possible optimization is to check the directions which terminate earliest or something (so it runs the fastest)
+                    if (oppositePlayerSquaresOnTheWay > 0):
+                        return True; #does Python support having this and the next line on one line
+                    break #if its not an opponent square- no line matters
+                else:
+                    break
+        return False
+    def AvailableSquares(Board, Player): #PLAYER -1 is the Black player - who makes -1 squares, PLAYER 1 is the White player - who makes 1 squares.
+        PlayableSpaces=[]
+        for square in EmptySquares
+            if IsSquarePlayable(self,square):
+                PlayableSpaces.append(square[:]) #duplicating it just in case I don't know how python works - haha!
+        return PlayableSpaces
+    def Move(self, Square):
+        #print("Move starting up")
+        if IsSquarePlayable(self, Square):
+            currentSquare = Square[:]
+            for i in directions:
+                currentSquare = Square[:]
+                currentSquare[0]+=i[0]
+                currentSquare[1]+=i[1]
+                #print("Square is "+str(Square))
+                #print("CurrentSquare is "+str(currentSquare))
+                L=[]
+                #print("Going through direction " + str(i))
+                while (0 <= currentSquare[0] and currentSquare[0] <= 7 and 0 <= currentSquare[1] and currentSquare[1] <= 7):
+                    if self.board[currentSquare[0]][currentSquare[1]] == -1*self.player:
+                        L.append([currentSquare[0], currentSquare[1]])
+                        currentSquare[0]+=i[0]
+                        currentSquare[1]+=i[1]
+                    elif self.board[currentSquare[0]][currentSquare[1]] == self.player:
+                        for i in L:
+                            #print("Changing the possession of "+str(i))
+                            self.board[i[0]][i[1]] = self.player
+                            self.square_counts[self.player]+=1
+                            self.square_counts[-1*self.player]-=1
+                        break
+                    else:
+                        break
+            self.square_counts[self.player]+=1
+            return True
+        else:
+            #print("Square was not available")
+            return False
+class GameNode:
+    def __init__(self,name,value=0, parent=None):
+        self.Name = name
+        self.value = value
+        self.parent = parent
+        self.children = []
+    def addChild(self, childNode):
+        self.cildren.append(childNode)
+class GameTree
+    def __init__(self):
+        self.root = None
+    def build_tree(self, data_list):
+        
+class MiniMax:
+    def __init__(self, game_tree):
+        self.game_tree = game_tree
+        self.root = game_true.root
+        self.currentNode = None
+        self.successors = []
+        return
+    def minimax(self, node):
+        best_val = self.max_value(node)
+        successors=self.getSuccessors(node)
+        best_move=None
+        for nextState in successors:
+            if nextState.value==best_val:
+                best_move=nextState
+            break
+        return best_move
+    def max_value(self,node):
+        if self.isTerminal(node):
+            return self.getUtility(node)
+        max_value=-100000 # basically -infinity
+        successors_states=self.getSuccessors(node)
+        for state in successors_states:
+            max_value=max(max_value, self.min_value(state))
+        return max_value
+    def min_value(self,node):
+        if self.isTerminal(node):
+            return self.getUtility(node)
+        min_value = 100000 #basically infinity
+        successor_states=self.getSucessors(node)
+        for state in successor_states:
+            min_value=min(min_value, self.max_value(state))
+        return min_value
+    def getSuccessors(self,node):
+        assert node is not None
+        return node.children
+    def isTerminal(self,node):
+        assert node is not None
+        return len(node.children)==0
+    def getUtility(self.node):
+        assert node is not None
+        return node.value # change this
+
+
 pygame.init()
 pygame.font.init()
 myfont = pygame.font.SysFont('Times New Roman', 18)
@@ -51,72 +182,6 @@ othelloBoard[3][2] = 2
 othelloBoard[4][5] = 2
 othelloBoard[5][4] = 2
 directions = [[1,0], [0,1], [-1, 0], [0, -1], [1,1], [1, -1], [-1, -1], [-1, 1]]
-def IsSquarePlayable(Board, Player, Square): # square is of the form [x,y]
-    #This needs to check each of 8 directions - we can do 8 while loops for now until we hit white space or another black
-    currentSquare = Square[:]
-    for i in directions:
-        currentSquare = Square[:]
-        currentSquare[0]+=i[0]
-        currentSquare[1]+=i[1] # pass by reference - but I think this is ok? CHECK
-        #print("Current Square is "+str(currentSquare))
-        oppositePlayerSquaresOnTheWay = 0
-        while (0 <= currentSquare[0] and currentSquare[0] <= 7 and 0 <= currentSquare[1] and currentSquare[1] <= 7):
-            if Board[currentSquare[0]][currentSquare[1]] == -1*Player:
-                oppositePlayerSquaresOnTheWay+=1
-                currentSquare[0] = currentSquare[0]+i[0]
-                currentSquare[1] = currentSquare[1]+i[1]
-            elif Board[currentSquare[0]][currentSquare[1]] == Player: # one possible optimization is to check the directions which terminate earliest or something (so it runs the fastest)
-                if (oppositePlayerSquaresOnTheWay > 0):
-                    return True; #does Python support having this and the next line on one line
-                break #if its not an opponent square- no line matters
-            else:
-                break
-    return False # Could use this method to store info about heuristic aswell - how many grids  - per direction?
-def AvailableSquares(Board, Player): #PLAYER -1 is the Black player - who makes -1 squares, PLAYER 1 is the White player - who makes 1 squares.
-    PlayableSpaces=[]
-    for i in range(8):
-        for j in range(8):
-            if Board[i][j] == 0:
-                if IsSquarePlayable(Board, Player, [i,j]):
-                    PlayableSpaces.append([i,j])
-    return PlayableSpaces
-#OPTIMIZATIONS TO AVAILABLESQUARES
-#2. PlayableSpaces can be modified to give information about the Heuristic aswell - can do one function call 
-#1. MODIFY BOARD DATA STRUCTURE TO STORE 0 TILES ALL IN ONE PLACE - DONT HAVE TO ITERATE 64 TILES EVERY TIME (major improvement)
-def MiniMax(othelloBoard, Player):
-    print("hi")
-def Move(Board, Player, Square):
-    #print("Move starting up")
-    if IsSquarePlayable(Board, Player, Square):
-        currentSquare = Square[:]
-        for i in directions:
-            currentSquare = Square[:]
-            currentSquare[0]+=i[0]
-            currentSquare[1]+=i[1]
-            #print("Square is "+str(Square))
-            #print("CurrentSquare is "+str(currentSquare))
-            L=[]
-            #print("Going through direction " + str(i))
-            while (0 <= currentSquare[0] and currentSquare[0] <= 7 and 0 <= currentSquare[1] and currentSquare[1] <= 7):
-                if Board[currentSquare[0]][currentSquare[1]] == -1*Player:
-                    L.append([currentSquare[0], currentSquare[1]])
-                    currentSquare[0]+=i[0]
-                    currentSquare[1]+=i[1]
-                elif Board[currentSquare[0]][currentSquare[1]] == Player:
-                    for i in L:
-                        #print("Changing the possession of "+str(i))
-                        Board[i[0]][i[1]] = Player
-                        SquareCounts[Player]+=1
-                        SquareCounts[-1*Player]-=1
-                    break
-                else:
-                    break
-        SquareCounts[Player]+=1
-        return True
-    else:
-        #print("Square was not available")
-        return False
-
 # NOW MOVING ONTO THE GAME DISPLAYING
 screen = pygame.display.set_mode([screen_width, screen_height])
 pygame.display.set_caption('Othello')
