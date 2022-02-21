@@ -1,22 +1,12 @@
 import pygame
 import math
+import numpy
 class OthelloBoard:
     def __init__(self, board, square_counts, player,empty_spaces):
-        self.board = [[0 for x in range(8)] for y in range(8)]
-        self.board[4][4]=-1
-        self.board[3][3]=-1
-        self.board[3][4]=1
-        self.board[4][3]=1
-        self.square_counts={
-            1:2
-            -1:2
-        }
-        player=-1
-        emptyspaces = [[a,b] for a in range(8) for b in range(8)]
-        emptyspaces.remove([4,4])
-        emptyspaces.remove([3,3])
-        emptyspaces.remove([3,4])
-        emptyspaces.remove([4,3])
+        self.board=board
+        self.player=player
+        self.square_counts=square_counts
+        self.empty_spaces=empty_spaces
     def IsSquarePlayable(self, Square): # square is of the form [x,y]
         #This needs to check each of 8 directions - we can do 8 while loops for now until we hit white space or another black
         currentSquare = Square[:]
@@ -27,6 +17,7 @@ class OthelloBoard:
             #print("Current Square is "+str(currentSquare))
             oppositePlayerSquaresOnTheWay = 0
             while (0 <= currentSquare[0] and currentSquare[0] <= 7 and 0 <= currentSquare[1] and currentSquare[1] <= 7):
+                #print("Curreny Square is "+str(currentSquare))
                 if self.board[currentSquare[0]][currentSquare[1]] == -1*self.player:
                     oppositePlayerSquaresOnTheWay+=1
                     currentSquare[0] = currentSquare[0]+i[0]
@@ -38,15 +29,15 @@ class OthelloBoard:
                 else:
                     break
         return False
-    def AvailableSquares(Board, Player): #PLAYER -1 is the Black player - who makes -1 squares, PLAYER 1 is the White player - who makes 1 squares.
+    def AvailableSquares(self): #PLAYER -1 is the Black player - who makes -1 squares, PLAYER 1 is the White player - who makes 1 squares.
         PlayableSpaces=[]
-        for square in EmptySquares
-            if IsSquarePlayable(self,square):
+        for square in self.empty_squares:
+            if self.IsSquarePlayable(square):
                 PlayableSpaces.append(square[:]) #duplicating it just in case I don't know how python works - haha!
         return PlayableSpaces
     def Move(self, Square):
         #print("Move starting up")
-        if IsSquarePlayable(self, Square):
+        if self.IsSquarePlayable(Square):
             currentSquare = Square[:]
             for i in directions:
                 currentSquare = Square[:]
@@ -75,6 +66,26 @@ class OthelloBoard:
         else:
             #print("Square was not available")
             return False
+    def clear(self):
+        self.player=-1
+        self.board=[[0 for x in range(8)] for y in range(8)]
+        self.board[4][4]=1
+        self.board[3][3]=1
+        self.board[3][4]=-1
+        self.board[4][3]=-1
+        self.board[2][3] = 2
+        self.board[3][2] = 2
+        self.board[4][5] = 2
+        self.board[5][4] = 2
+        self.square_counts={
+            1:2,
+            -1:2
+        }
+        self.empty_spaces=[[a,b] for a in range(8) for b in range(8)]
+        self.empty_spaces.remove([4,4])
+        self.empty_spaces.remove([3,3])
+        self.empty_spaces.remove([3,4])
+        self.empty_spaces.remove([4,3])
 class GameNode:
     def __init__(self,name,value=0, parent=None):
         self.Name = name
@@ -83,10 +94,10 @@ class GameNode:
         self.children = []
     def addChild(self, childNode):
         self.cildren.append(childNode)
-class GameTree
+class GameTree:
     def __init__(self):
         self.root = None
-    def build_tree(self, data_list):
+    #def build_tree(self, data_list):
         
 class MiniMax:
     def __init__(self, game_tree):
@@ -126,11 +137,31 @@ class MiniMax:
     def isTerminal(self,node):
         assert node is not None
         return len(node.children)==0
-    def getUtility(self.node):
+    def getUtility(self,node):
         assert node is not None
         return node.value # change this
 
-
+#initialize starting setup
+player=-1
+board=[[0 for x in range(8)] for y in range(8)]
+board[4][4]=1
+board[3][3]=1
+board[3][4]=-1
+board[4][3]=-1
+board[2][3] = 2
+board[3][2] = 2
+board[4][5] = 2
+board[5][4] = 2
+square_counts={
+    1:2,
+    -1:2
+}
+empty_spaces=[[a,b] for a in range(8) for b in range(8)]
+empty_spaces.remove([4,4])
+empty_spaces.remove([3,3])
+empty_spaces.remove([3,4])
+empty_spaces.remove([4,3])
+othelloBoard = OthelloBoard(board, square_counts, player, empty_spaces)
 pygame.init()
 pygame.font.init()
 myfont = pygame.font.SysFont('Times New Roman', 18)
@@ -154,7 +185,7 @@ def draw_grid():
 
 def draw_markers():
     x_pos = 0
-    for x in othelloBoard:
+    for x in othelloBoard.board:
         y_pos = 0
         for y in x:
             if y == 1:
@@ -167,20 +198,6 @@ def draw_markers():
         x_pos+=1
 # SETTING UP THE GAME VARIABLES AND FUNCTIONS
 # NOTE: SOME OF THESE AREN'T TOTALLY NECESSARY FOR PLAYING! BUT A BOT WILL NEED THEM!
-SquareCounts = {
-    -1: 2,
-    1: 2
-}
-player = -1 # black is -1, white is 1, black starts
-othelloBoard = [[0 for x in range(8)] for y in range(8)]
-othelloBoard[3][3] = 1
-othelloBoard[3][4] = -1
-othelloBoard[4][3] = -1
-othelloBoard[4][4] = 1
-othelloBoard[2][3] = 2
-othelloBoard[3][2] = 2
-othelloBoard[4][5] = 2
-othelloBoard[5][4] = 2
 directions = [[1,0], [0,1], [-1, 0], [0, -1], [1,1], [1, -1], [-1, -1], [-1, 1]]
 # NOW MOVING ONTO THE GAME DISPLAYING
 screen = pygame.display.set_mode([screen_width, screen_height])
@@ -190,11 +207,11 @@ clicked = False
 while running:
     draw_grid()
     draw_markers() # change the terminology here
-    if (player == -1):
-        textsurface = myfont.render('Turn: Black, Square Counts: Black: '+str(SquareCounts[-1]) + ' and White: ' + str(SquareCounts[1]), False, (0,0,0))
+    if (othelloBoard.player == -1):
+        textsurface = myfont.render('Turn: Black, Square Counts: Black: '+str(othelloBoard.square_counts[-1]) + ' and White: ' + str(othelloBoard.square_counts[1]), False, (0,0,0))
         screen.blit(textsurface, (0, 450))
-    elif (player==1):
-        textsurface = myfont.render('Turn: White, Square Counts: Black: '+str(SquareCounts[-1]) + ' and White: ' + str(SquareCounts[1]), False, (0,0,0))
+    elif (othelloBoard.player==1):
+        textsurface = myfont.render('Turn: White, Square Counts: Black: '+str(othelloBoard.square_counts[-1]) + ' and White: ' + str(othelloBoard.square_counts[1]), False, (0,0,0))
         screen.blit(textsurface, (0, 450))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -209,38 +226,38 @@ while running:
             #print("This is cell ["+str(cell_x//50)+","+str(cell_y//50))
             if (cell_y <= 400):
                 #print("Made it though the 400 check")
-                if othelloBoard[cell_x // 50][cell_y // 50] == 2 or othelloBoard[cell_x//50][cell_y//50] == 0:
+                if othelloBoard.board[cell_x // 50][cell_y // 50] == 2 or othelloBoard.board[cell_x//50][cell_y//50] == 0:
                     #print("Made it through the is it available slot check")
                     # this would be where to check if the move is possible
-                    if (Move(othelloBoard, player, [cell_x//50, cell_y//50])):
+                    if (othelloBoard.Move([cell_x//50, cell_y//50])):
                         #print("Made it though the move stage")
-                        othelloBoard[cell_x // 50][cell_y // 50] = player
-                        player*=-1
+                        othelloBoard.board[cell_x // 50][cell_y // 50] = othelloBoard.player
+                        othelloBoard.player*=-1
                         # eventually will need to swtich around the storage so that i can not have to iterate twice
                         AvailableSpacesCounter=0
                         for i in range(8):
                             for j in range(8):
-                                if (othelloBoard[i][j] == 0):
-                                    if IsSquarePlayable(othelloBoard, player, [i,j]):
-                                        othelloBoard[i][j] = 2
+                                if (othelloBoard.board[i][j] == 0):
+                                    if othelloBoard.IsSquarePlayable([i,j]):
+                                        othelloBoard.board[i][j] = 2
                                         AvailableSpacesCounter+=1
-                                if (othelloBoard[i][j] == 2):
-                                    if not(IsSquarePlayable(othelloBoard, player, [i,j])):
-                                        othelloBoard[i][j]=0
+                                if (othelloBoard.board[i][j] == 2):
+                                    if not(othelloBoard.IsSquarePlayable([i,j])):
+                                        othelloBoard.board[i][j]=0
                                     else:
                                         AvailableSpacesCounter+=1
                         if AvailableSpacesCounter==0:
-                            player*=-1
+                            othelloBoard.player*=-1
                             AvailableSpacesCounter2=0
                             for i in range(8):
                                 for j in range(8):
-                                    if (othelloBoard[i][j] == 0):
-                                        if IsSquarePlayable(othelloBoard, player, [i,j]):
-                                            othelloBoard[i][j] = 2
+                                    if (othelloBoard.board[i][j] == 0):
+                                        if othelloBoard.IsSquarePlayable([i,j]):
+                                            othelloBoard.board[i][j] = 2
                                             AvailableSpacesCounter2+=1
-                                    if (othelloBoard[i][j] == 2):
-                                        if not(IsSquarePlayable(othelloBoard, player, [i,j])):
-                                            othelloBoard[i][j]=0
+                                    if (othelloBoard.board[i][j] == 2):
+                                        if not(othelloBoard.IsSquarePlayable([i,j])):
+                                            othelloBoard.board[i][j]=0
                                         else:
                                             AvailableSpacesCounter2+=1
                             if AvailableSpacesCounter2 == 0:
