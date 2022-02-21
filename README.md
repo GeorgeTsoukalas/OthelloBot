@@ -8,6 +8,8 @@ Update Log
 
 [2/17/2022] The visual and game functionality now works and is available in OthelloGameUpdated.py. It requires pygame to run, and also keeps a tracker of the square counts for each player. Next up is coding the minimax algorithm.
 
+[2/20/2022] Modified the structure to be object-oriented in preparation for implementation of the minimax algorithm.
+
 Ideas
 -----
 1. Placing tiles on the boundary of the board is probably a little more useful than just the best choice
