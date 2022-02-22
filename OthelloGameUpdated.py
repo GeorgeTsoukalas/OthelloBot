@@ -38,7 +38,6 @@ class OthelloBoard:
     def Move(self, Square):
         #print("Move starting up")
         if self.IsSquarePlayable(Square):
-            currentSquare = Square[:]
             for i in directions:
                 currentSquare = Square[:]
                 currentSquare[0]+=i[0]
@@ -62,10 +61,36 @@ class OthelloBoard:
                     else:
                         break
             self.square_counts[self.player]+=1
-            return True
-        else:
-            #print("Square was not available")
-            return False
+            self.board[Square[0]][Square[1]]=self.player
+            self.player=self.player*-1
+            AvailableSpacesCounter=0
+            for i in self.empty_spaces:
+                if (self.board[i[0]][i[1]] == 0):
+                    if self.IsSquarePlayable(i):
+                        self.board[i[0]][i[1]] = 2
+                        AvailableSpacesCounter+=1
+                if (self.board[i[0]][i[1]] == 2):
+                    if not(self.IsSquarePlayable(i)):
+                        self.board[i[0]][i[1]]=0
+                    else:
+                        AvailableSpacesCounter+=1
+            if AvailableSpacesCounter==0:
+                self.player*=-1
+                AvailableSpacesCounter2=0
+                for i in self.empty_spaces:
+                    if (self.board[i[0]][i[1]] == 0):
+                        if self.IsSquarePlayable(i):
+                            self.board[i[0]][i[1]] = 2
+                            AvailableSpacesCounter2+=1
+                    if (self.board[i[0]][i[1]] == 2):
+                        if not(self.IsSquarePlayable(i)):
+                            self.board[i[0]][i[1]]=0
+                        else:
+                            AvailableSpacesCounter2+=1
+                if AvailableSpacesCounter2 == 0:
+                    # need some logic for game ending
+                    print("Game Over!")
+                    self.clear()
     def clear(self):
         self.player=-1
         self.board=[[0 for x in range(8)] for y in range(8)]
@@ -87,18 +112,50 @@ class OthelloBoard:
         self.empty_spaces.remove([3,4])
         self.empty_spaces.remove([4,3])
 class GameNode:
-    def __init__(self,name,value=0, parent=None):
-        self.Name = name
+    def __init__(self,state,depth, value=0, parent=None):
+        self.state = state
         self.value = value
         self.parent = parent
         self.children = []
+        self.depth = depth
     def addChild(self, childNode):
-        self.cildren.append(childNode)
-class GameTree:
+        self.children.append(childNode)
+    def Heuristic1():
+        if (self.state.square_counts[1]+self.state.square_counts[-1] == 64):
+            if (self.state.square_counts[1] > self.state.square_counts[-1]):
+                return 65 # higher than any possible eval number (for a white = machine controlled win)
+            else:
+                return -65
+        return self.state.square_counts[1]-self.state.square_counts[-1] # this is an example so far, but it must depend on the player!
+        
+class GameTree: # prescribedDepth is a glboal 
     def __init__(self):
         self.root = None
-    #def build_tree(self, data_list):
+    def build_tree(self, startingState): # put datalist = (NEED TO HANDLE THE CASE WHERE PLAYER CANNOT MAKE MORE MOVES!
+        self.root = GameNode(startingState, 0, None, 0) # MUST PASS IN THE ENTIRE OTHELLOBOARD CLASS
+        L=[self.root]
+        while (len(L) > 0):
+            Q=L.pop(0);
+            deepCopy = OthelloBoard(Q.state.board.copy(), Q.state.square_counts.copy(), Q.state.player, Q.state.empty_spaces.copy())
+            for i in Q.state.AvailableSpaces():
+                Q[1].addChild(GameNode(deepCopy.Move(i),Q.depth+1, deepCopy.heuristic1(), Q)) # update the values here
+            if Q.depth+1 < prescribedDepth: # so the entires will go 1 over the prescribed depth
+                for i in Q.children:
+                    L.append(i)
+    
+        # let's hope that this actually works thus far
+        # might need a deep copy of Q when moved
+# Now I will write THE NEW LOOP!
+
+#while(blah):
+    #if player == -1: # this is the HUMAN controlled player atm
+
+    #else:
+    #    gameTree = GameTree().build_tree(othelloBoard)
+    #    miniMax =  MiniMax(gameTree)
+    #    miniMax.minimax(self.root)
         
+
 class MiniMax:
     def __init__(self, game_tree):
         self.game_tree = game_tree
@@ -206,6 +263,34 @@ running = True
 clicked = False
 while running:
     draw_grid()
+    draw_markers()
+    if (othelloBoard.player == -1):
+        textsurface = myfont.render('Turn: Black, Square Counts: Black: '+str(othelloBoard.square_counts[-1]) + ' and White: ' + str(othelloBoard.square_counts[1]), False, (0,0,0))
+        screen.blit(textsurface, (0, 450))
+    elif (othelloBoard.player==1):
+        textsurface = myfont.render('Turn: White, Square Counts: Black: '+str(othelloBoard.square_counts[-1]) + ' and White: ' + str(othelloBoard.square_counts[1]), False, (0,0,0))
+        screen.blit(textsurface, (0, 450))
+    for event in pygame.event.get()
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.MOUSEBUTTONDOWN and clicked == False:
+            clicked = True
+        if event.type == pygame.MOUSEBUTTONUP and clicker == True:
+            clicked = False
+            if (othelloBoard.player == -1): # this is the human controlled player
+                pos = pygame.mouse.get_pos()
+                cell_x = pos[0]
+                cell_y = pos[1]
+                if (cell_y <= 400):
+                    if othelloBoard.board[cell_x //50][cell_y//50] == 2 or othelloBoard.board[cell_x//50][cell_y//50] == 0:
+                        if (othelloBoard.IsSquarePlayable([cell_x//50, cell_y//50])):
+                            othelloBoard.Move([cell_x//50, cell_y//50])
+            elif (othelloBoard.player == 1): # this is machine controlled player - NEED SOME WAY TO WRITE MOVES WHERE YOU GET ANOTHER TURN, could keep a tracker of available spaces and havea lever for how much a free MOVE is worth.
+               GameTree = game_tree.build_tree(othelloBoard)
+               
+        
+
+    draw_grid()
     draw_markers() # change the terminology here
     if (othelloBoard.player == -1):
         textsurface = myfont.render('Turn: Black, Square Counts: Black: '+str(othelloBoard.square_counts[-1]) + ' and White: ' + str(othelloBoard.square_counts[1]), False, (0,0,0))
@@ -219,7 +304,7 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN and clicked == False:
             clicked = True
         if event.type == pygame.MOUSEBUTTONUP and clicked == True:
-            clicker = False
+            clicked = False
             pos = pygame.mouse.get_pos()
             cell_x = pos[0]
             cell_y = pos[1]
@@ -229,49 +314,10 @@ while running:
                 if othelloBoard.board[cell_x // 50][cell_y // 50] == 2 or othelloBoard.board[cell_x//50][cell_y//50] == 0:
                     #print("Made it through the is it available slot check")
                     # this would be where to check if the move is possible
-                    if (othelloBoard.Move([cell_x//50, cell_y//50])):
-                        #print("Made it though the move stage")
-                        othelloBoard.board[cell_x // 50][cell_y // 50] = othelloBoard.player
-                        othelloBoard.player*=-1
-                        # eventually will need to swtich around the storage so that i can not have to iterate twice
-                        AvailableSpacesCounter=0
-                        for i in range(8):
-                            for j in range(8):
-                                if (othelloBoard.board[i][j] == 0):
-                                    if othelloBoard.IsSquarePlayable([i,j]):
-                                        othelloBoard.board[i][j] = 2
-                                        AvailableSpacesCounter+=1
-                                if (othelloBoard.board[i][j] == 2):
-                                    if not(othelloBoard.IsSquarePlayable([i,j])):
-                                        othelloBoard.board[i][j]=0
-                                    else:
-                                        AvailableSpacesCounter+=1
-                        if AvailableSpacesCounter==0:
-                            othelloBoard.player*=-1
-                            AvailableSpacesCounter2=0
-                            for i in range(8):
-                                for j in range(8):
-                                    if (othelloBoard.board[i][j] == 0):
-                                        if othelloBoard.IsSquarePlayable([i,j]):
-                                            othelloBoard.board[i][j] = 2
-                                            AvailableSpacesCounter2+=1
-                                    if (othelloBoard.board[i][j] == 2):
-                                        if not(othelloBoard.IsSquarePlayable([i,j])):
-                                            othelloBoard.board[i][j]=0
-                                        else:
-                                            AvailableSpacesCounter2+=1
-                            if AvailableSpacesCounter2 == 0:
-                                print("Game Over!")
-                        
-        # Fill the background with white#screen.fill((255, 255, 255))
-
-    # Draw a solid blue circle in the center
-    #pygame.draw.circle(screen, (0, 0, 255), (250, 250), 75)
-
+                    if (othelloBoard.IsSquarePlayable([cell_x//50, cell_y//50])):
+                        othelloBoard.Move([cell_x//50,cell_y//50])
     # Flip the display
     pygame.display.flip()
 
 # Done! Time to quit.
 pygame.quit()
-
-    
