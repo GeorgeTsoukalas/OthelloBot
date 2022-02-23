@@ -10,6 +10,16 @@ Update Log
 
 [2/20/2022] Modified the structure to be object-oriented in preparation for implementation of the minimax algorithm.
 
+[2/22/2022] Finally implemented the minimax algorithm - the game now plays! The initial heuristic is the difference between white/black squares, and a game tree is computed up to depth prescribedDepth, which runs quickly for d = 2, 3, 4. Have not tested 5. I have made the bot play itself, it ends up in an interesting arrow pattern for d = 4, for d = 2 some more degenerate form of this arrow pattern. I have added a to do section to this README as a reminder of some things to improve.
+
+To do
+-----
+1. Implement alpha-beta pruning - should be able to compute 1-2 more plies.
+2. Fix error in specific case where no moves possible.
+3. Add some randomized component to the game-playing (perhaps let the opening be random - so that the arrow pattern is harder to reduce to).
+4. Make prescribedDepth a function of gametime. The middle game generally has the most squares to evaluate - so here we could set d = 4 or so at the moment, but the opening and endgame have very low branching factors, and can probably handle d = 6 or 7.
+5. Test against online engine.
+
 Ideas
 -----
 1. Placing tiles on the boundary of the board is probably a little more useful than just the best choice
