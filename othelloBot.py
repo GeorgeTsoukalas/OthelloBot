@@ -89,27 +89,6 @@ class OthelloBoard:
                 self.gameOverCounter = 1 # if this is 1 and isvaialblespaces again returns no move then we know 
             elif AvailableSpacesCounter==0 and self.gameOverCounter == 1:
                 self.gameOverCounter = 2
-
-
-
-
-
-            #    self.player*=-1
-           #     AvailableSpacesCounter2=0
-          #      for i in self.empty_spaces:
-          #          if (self.board[i[0]][i[1]] == 0):
-          #              if self.IsSquarePlayable(i):
-           #                 self.board[i[0]][i[1]] = 2
-           #                 AvailableSpacesCounter2+=1
-          #          if (self.board[i[0]][i[1]] == 2):
-          #              if not(self.IsSquarePlayable(i)):
-           #                 self.board[i[0]][i[1]]=0
-          #              else:
-           #                 AvailableSpacesCounter2+=1
-            #    if AvailableSpacesCounter2 == 0:
-                    # need some logic for game ending
-           #         print("Game Over!")
-                    #self.clear()
     def clear(self):
         self.player=-1
         self.board=[[0 for x in range(8)] for y in range(8)]
