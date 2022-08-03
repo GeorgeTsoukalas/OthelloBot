@@ -268,12 +268,20 @@ while running:
             clicked = True
         if event.type == pygame.MOUSEBUTTONUP and clicked == True:
             clicked = False
-            if (othelloBoard.player == -1): # this is the human controlled player
+            if (othelloBoard.player == -1): # this is the human controlled player (currently machine controlled)
                 game_tree = GameTree()
                 game_tree.build_tree(copy.deepcopy(othelloBoard))
                 F=game_tree.miniMaxReturnNextNode(game_tree.root, prescribedDepth, othelloBoard.player).state.empty_spaces
                 bestMoveList = [item for item in othelloBoard.empty_spaces if item not in F]
                 othelloBoard.Move(bestMoveList[0])
+                # The following code is for the case of human controlled player - it is currently set to machine against machine!
+                #pos = pygame.mouse.get_pos()
+                #cell_x = pos[0]
+                #cell_y = pos[1]
+                #if (cell_y <= 400):
+                #    if othelloBoard.board[cell_x //50][cell_y//50] == 2 or othelloBoard.board[cell_x//50][cell_y//50] == 0:
+                #        if (othelloBoard.IsSquarePlayable([cell_x//50, cell_y//50])):
+                #            othelloBoard.Move([cell_x//50, cell_y//50])
             elif (othelloBoard.player == 1): # this is machine controlled player - NEED SOME WAY TO WRITE MOVES WHERE YOU GET ANOTHER TURN, could keep a tracker of available spaces and havea lever for how much a free MOVE is worth.
                 game_tree = GameTree()
                 game_tree.build_tree(copy.deepcopy(othelloBoard))
