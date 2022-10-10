@@ -1,7 +1,7 @@
 (set-logic BV)
 
 (define-fun origFun ( (X Float) (Y Float) ) Bool 
-		(and (hyp OrigFun1) (hyp OrigFun2))
+		(and (hyp (OrigFun1 X Y)) (hyp (OrigFun2 X Y)))
 )
 
 (synth-fun skel ( (X Float) (Y Float) ) Bool
@@ -14,7 +14,7 @@
 										  (hyp func)
 		  ))
 		  (func Float  (
-										  (FullFeatureSelect)
+										  (affine X Y)
 		  )))
 )
 
