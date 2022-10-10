@@ -1,7 +1,7 @@
 (set-logic BV)
 
 (define-fun origFun ( (X Float) (Y Float) ) Bool 
-		(and (hyp (6.0*X + 2.0*Y)) (hyp (3.0*X - 1.0*Y)))
+		(and (hyp OrigFun1) (hyp OrigFun2))
 )
 
 (synth-fun skel ( (X Float) (Y Float) ) Bool
