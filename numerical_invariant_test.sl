@@ -8,6 +8,8 @@
 		  ((Start Bool (
 										  (and depth1 depth1)
 										  (or depth1 depth1)
+										  (xor depth1 depth1)
+										  (not depth1)
 										  (affine X Y)
 		  ))
 		  (depth1 Bool (
