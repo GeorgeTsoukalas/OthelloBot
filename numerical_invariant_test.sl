@@ -6,9 +6,22 @@
 
 (synth-fun skel ( (X Float) (Y Float) ) Bool
 		  ((Start Bool (
-										  (and Start Start)
-										  (or Start Start)
+										  (and depth1 depth1)
+										  (or depth1 depth1)
 										  (affine X Y)
+		  ))
+		  (depth1 Bool (
+		  								(affine X Y)
+										(and depth2 depth2)
+		  								(or depth2 depth2)
+		  ))
+		  (depth2 Bool (
+		  								(affine X Y)
+										(and depth3 depth3)
+										(or depth3 depth3)
+		  ))
+		  (depth3 Bool (
+		  								(affine X Y)
 		  )))
 )
 
